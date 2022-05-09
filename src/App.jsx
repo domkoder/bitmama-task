@@ -4,20 +4,68 @@ import { ReactComponent as ProfileIcon } from './icons/profile-circle.svg'
 import { ReactComponent as UserIcon } from './icons/profile.svg'
 
 function App() {
+	// const sessions = [
+	// 	{
+	// 		username: 'nandom',
+	// 		status: 'active',
+	// 		isRemoved: false,
+	// 	},
+
+	// 	{
+	// 		username: 'levi',
+	// 		status: 'active',
+	// 		isRemoved: false,
+	// 	},
+
+	// 	{
+	// 		username: 'robinson',
+	// 		status: 'active',
+	// 		isRemoved: false,
+	// 	},
+	// ]
+
 	const [user, setUser] = React.useState(
-		sessionStorage.getItem('username') || null
+		JSON.parse(sessionStorage.getItem('username')) || null
+	)
+
+	const [sessions, setSessions] = React.useState(
+		JSON.parse(localStorage.getItem('sessions')) || []
 	)
 
 	const handleLogout = () => {
-		sessionStorage.setItem('username', null)
+		sessionStorage.setItem('username', JSON.stringify(null))
 		setUser(null)
 	}
 
 	const handleLogin = (event) => {
 		event.preventDefault()
 		const username = event.target.username.value
-		sessionStorage.setItem('username', username)
+
+		// Login the user
+		sessionStorage.setItem('username', JSON.stringify(username))
 		setUser(username)
+
+		// save user session to local storage
+		localStorage.setItem(
+			'sessions',
+			JSON.stringify([
+				...sessions,
+				{
+					username,
+					status: 'active',
+					isRemoved: false,
+				},
+			])
+		)
+
+		setSessions([
+			...sessions,
+			{
+				username,
+				status: 'active',
+				isRemoved: false,
+			},
+		])
 	}
 
 	return (
@@ -35,35 +83,33 @@ function App() {
 					</header>
 
 					<ul className="list">
-						<li className="list__item">
-							<div className="user__info">
-								<span className="user__icon">
-									<UserIcon />
-								</span>
-								<div>
-									<div>
-										levi <span className="user__status active">active</span>
+						{sessions
+							.filter(
+								({ username, isRemoved }) => username !== user && !isRemoved
+							)
+							.map(({ username, status }) => (
+								<li className="list__item">
+									<div className="user__info">
+										<span className="user__icon">
+											<UserIcon />
+										</span>
+										<div>
+											<div>
+												{username}
+												<span
+													className={`
+													user__status ${status === 'active' ? 'active' : ''}
+												`}
+												>
+													{status}
+												</span>
+											</div>
+											<div className="user__tab">Tab 1</div>
+										</div>
 									</div>
-									<div className="user__tab">Tab 1</div>
-								</div>
-							</div>
-							<button class="delete">×</button>
-						</li>
-
-						<li className="list__item">
-							<div className="user__info">
-								<span className="user__icon">
-									<UserIcon />
-								</span>
-								<div className="user__container">
-									<div>
-										Robinson <span className="user__status">idle</span>
-									</div>
-									<div className="user__tab">Tab 1</div>
-								</div>
-							</div>
-							<button class="delete">×</button>
-						</li>
+									<button class="delete">×</button>
+								</li>
+							))}
 					</ul>
 				</div>
 			) : (
