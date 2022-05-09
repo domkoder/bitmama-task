@@ -33,8 +33,14 @@ function App() {
 	)
 
 	const handleLogout = () => {
+		localStorage.setItem(
+			'sessions',
+			JSON.stringify(sessions.filter(({ username }) => username !== user))
+		)
+		setSessions(JSON.parse(localStorage.getItem('sessions')))
+
 		sessionStorage.setItem('username', JSON.stringify(null))
-		setUser(null)
+		setUser(JSON.parse(sessionStorage.getItem('username')))
 	}
 
 	const handleLogin = (event) => {
@@ -43,7 +49,7 @@ function App() {
 
 		// Login the user
 		sessionStorage.setItem('username', JSON.stringify(username))
-		setUser(username)
+		setUser(JSON.parse(sessionStorage.getItem('username')))
 
 		// save user session to local storage
 		localStorage.setItem(
@@ -57,15 +63,7 @@ function App() {
 				},
 			])
 		)
-
-		setSessions([
-			...sessions,
-			{
-				username,
-				status: 'active',
-				isRemoved: false,
-			},
-		])
+		setSessions(JSON.parse(localStorage.getItem('sessions')))
 	}
 
 	return (
