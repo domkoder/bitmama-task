@@ -1,38 +1,77 @@
-.App {
-  text-align: center;
+.header {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.card {
+	max-width: 450px;
+	border-radius: 3px;
+	padding: 2rem;
+	padding-bottom: 3.5em;
+	box-shadow: rgb(0 0 0 / 20%) 0px 10px 30px -5px;
+	margin: 20vh auto;
+	border-radius: 5px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.card__title {
+	text-align: center;
+	font-size: 2em;
+	margin-top: 0;
+	margin-bottom: 0.5rem;
+	font-weight: 400;
+	line-height: 1.2;
+	color: #212529;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.form {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
 }
 
-.App-link {
-  color: #61dafb;
+.form__control {
+	margin: 10px auto;
+	width: 100%;
+	max-width: 300px;
+	display: flex;
+	flex-direction: column;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.form__label {
+	display: inline-block;
+	color: #212529;
+	margin-bottom: 10px;
+}
+
+.form__input {
+	border-radius: 5px;
+	border: 1px solid rgb(241, 241, 244);
+	background: rgb(241, 242, 247);
+	padding: 10px 12px;
+}
+
+.button {
+	padding: 11px 15px;
+	border: 0px;
+	line-height: 1;
+	border-radius: 5px;
+	background: rgb(63, 81, 181);
+	color: white;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.button:hover {
+	background: rgb(51, 72, 187);
+}
+
+.button-secondary {
+	background: rgb(241 242 247);
+	color: rgb(65, 66, 72);
+}
+
+.button-secondary:hover {
+	background: rgb(230, 232, 240);
 }
