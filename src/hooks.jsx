@@ -1,11 +1,5 @@
 import * as React from 'react'
-
-/**
- *
- * @param {String} key The key to set in localStorage for this value
- * @param {Object} defaultValue The value to use if it is not already in localStorage
- * @param {{serialize: Function, deserialize: Function}} options The serialize and deserialize functions to use (defaults to JSON.stringify and JSON.parse respectively)
- */
+import { getIsDocumentHidden, getBrowserVisibilityProp } from './helpers'
 
 function useLocalStorageState(
 	key,
@@ -59,6 +53,23 @@ function useSessionStorageState(
 	}, [key, state, serialize])
 
 	return [state, setState]
+}
+
+export function usePageVisibility() {
+	const [isVisible, setIsVisible] = React.useState(getIsDocumentHidden())
+	const onVisibilityChange = () => setIsVisible(getIsDocumentHidden())
+
+	React.useEffect(() => {
+		const visibilityChange = getBrowserVisibilityProp()
+
+		document.addEventListener(visibilityChange, onVisibilityChange, false)
+
+		return () => {
+			document.removeEventListener(visibilityChange, onVisibilityChange)
+		}
+	})
+
+	return isVisible
 }
 
 export { useLocalStorageState, useSessionStorageState }
