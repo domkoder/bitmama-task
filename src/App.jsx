@@ -1,46 +1,19 @@
 import React from 'react'
+
+import { useLocalStorageState, useSessionStorageState } from './hooks'
+
 import './App.css'
+
 import { ReactComponent as ProfileIcon } from './icons/profile-circle.svg'
 import { ReactComponent as UserIcon } from './icons/profile.svg'
 
 function App() {
-	// const sessions = [
-	// 	{
-	// 		username: 'nandom',
-	// 		status: 'active',
-	// 		isRemoved: false,
-	// 	},
-
-	// 	{
-	// 		username: 'levi',
-	// 		status: 'active',
-	// 		isRemoved: false,
-	// 	},
-
-	// 	{
-	// 		username: 'robinson',
-	// 		status: 'active',
-	// 		isRemoved: false,
-	// 	},
-	// ]
-
-	const [user, setUser] = React.useState(
-		JSON.parse(sessionStorage.getItem('username')) || null
-	)
-
-	const [sessions, setSessions] = React.useState(
-		JSON.parse(localStorage.getItem('sessions')) || []
-	)
+	const [sessions, setSessions] = useLocalStorageState('sessions', [])
+	const [user, setUser] = useSessionStorageState('user', null)
 
 	const handleLogout = () => {
-		localStorage.setItem(
-			'sessions',
-			JSON.stringify(sessions.filter(({ username }) => username !== user))
-		)
-		setSessions(JSON.parse(localStorage.getItem('sessions')))
-
-		sessionStorage.setItem('username', JSON.stringify(null))
-		setUser(JSON.parse(sessionStorage.getItem('username')))
+		setSessions(sessions.filter(({ username }) => username !== user))
+		setUser(null)
 	}
 
 	const handleLogin = (event) => {
@@ -48,23 +21,21 @@ function App() {
 		const username = event.target.username.value
 
 		// Login the user
-		sessionStorage.setItem('username', JSON.stringify(username))
-		setUser(JSON.parse(sessionStorage.getItem('username')))
 
+		setUser(username)
 		// save user session to local storage
-		localStorage.setItem(
-			'sessions',
-			JSON.stringify([
-				...sessions,
-				{
-					username,
-					status: 'active',
-					isRemoved: false,
-				},
-			])
-		)
-		setSessions(JSON.parse(localStorage.getItem('sessions')))
+		setSessions([
+			...sessions,
+			{
+				username,
+				status: 'active',
+				isRemoved: false,
+			},
+		])
 	}
+
+	console.log({ sessions })
+	console.log(JSON.parse(localStorage.getItem('sessions')))
 
 	return (
 		<div>
@@ -86,7 +57,7 @@ function App() {
 								({ username, isRemoved }) => username !== user && !isRemoved
 							)
 							.map(({ username, status }) => (
-								<li className="list__item">
+								<li className="list__item" key={username}>
 									<div className="user__info">
 										<span className="user__icon">
 											<UserIcon />
