@@ -46,6 +46,14 @@ function App() {
 							<ProfileIcon className="profile__icon" />
 							<p>{user}</p>
 						</div>
+						<a
+							href="http://localhost:3000/"
+							target="_blank"
+							rel="noreferrer"
+							className="button"
+						>
+							Login another account
+						</a>
 						<button className="button button-secondary" onClick={handleLogout}>
 							Logout
 						</button>
