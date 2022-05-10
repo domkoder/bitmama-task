@@ -1,6 +1,16 @@
 import React from 'react'
 
-import { useLocalStorageState, useSessionStorageState } from './hooks'
+// import {
+// 	useLocalStorageState,
+// 	useSessionStorageState,
+// 	usePageVisibility,
+// } from './hooks'
+
+import {
+	useLocalStorageState,
+	useSessionStorageState,
+	usePageVisibility,
+} from './hooks'
 
 import './App.css'
 
@@ -10,9 +20,36 @@ import { ReactComponent as UserIcon } from './icons/profile.svg'
 function App() {
 	const [sessions, setSessions] = useLocalStorageState('sessions', [])
 	const [user, setUser] = useSessionStorageState('user', null)
+	const isVisible = usePageVisibility()
+
+	// Change the title based on page visibility
+
+	// if (isVisible) {
+	// 	document.title = 'Active'
+	// } else {
+	// 	document.title = 'Inactive'
+	// }
+
+	// const refresh = () => {
+	// 	setSessions([...sessions])
+	// 	setUser(user)
+	// }
+
+	// if (isVisible) {
+	// 	refresh()
+	// }
+
+	React.useEffect(() => {
+		if (!user) return
+		if (!sessions.find((session) => session.id === user.id)) {
+			console.log('running')
+			setUser(null)
+		}
+		// console.log('running')
+	}, [sessions, setUser, user])
 
 	const handleLogout = () => {
-		setSessions(sessions.filter(({ username }) => username !== user))
+		removeSession(user.id)
 		setUser(null)
 	}
 
@@ -20,22 +57,25 @@ function App() {
 		event.preventDefault()
 		const username = event.target.username.value
 
-		// Login the user
+		// creat user object
+		const id = Math.floor(Math.random() * 10000) + 1
+		const newUser = {
+			id,
+			username,
+			status: 'active',
+		}
 
-		setUser(username)
-		// save user session to local storage
-		setSessions([
-			...sessions,
-			{
-				username,
-				status: 'active',
-				isRemoved: false,
-			},
-		])
+		// add user to session
+		setUser(newUser)
+
+		// add user session to list of sessions
+		setSessions([...sessions, newUser])
 	}
 
-	console.log({ sessions })
-	console.log(JSON.parse(localStorage.getItem('sessions')))
+	// remove user session from list of sessions
+	const removeSession = (userId) => {
+		setSessions(sessions.filter(({ id }) => id !== userId))
+	}
 
 	return (
 		<div>
@@ -44,7 +84,7 @@ function App() {
 					<header className="header">
 						<div className="profile__info ">
 							<ProfileIcon className="profile__icon" />
-							<p>{user}</p>
+							<p>{user.username}</p>
 						</div>
 						<a
 							href="http://localhost:3000/"
@@ -61,10 +101,8 @@ function App() {
 
 					<ul className="list">
 						{sessions
-							.filter(
-								({ username, isRemoved }) => username !== user && !isRemoved
-							)
-							.map(({ username, status }) => (
+							.filter(({ id }) => id !== user.id)
+							.map(({ username, status, id }) => (
 								<li className="list__item" key={username}>
 									<div className="user__info">
 										<span className="user__icon">
@@ -84,7 +122,9 @@ function App() {
 											<div className="user__tab">Tab 1</div>
 										</div>
 									</div>
-									<button class="delete">×</button>
+									<button className="delete" onClick={() => removeSession(id)}>
+										×
+									</button>
 								</li>
 							))}
 					</ul>
