@@ -60,6 +60,7 @@ function App() {
 	// }, [isVisible])
 
 	React.useEffect(() => {
+		if (!user) return
 		let intervalId
 		if (isVisible) {
 			intervalId = setInterval(() => {
@@ -69,14 +70,13 @@ function App() {
 		return () => {
 			clearInterval(intervalId)
 		}
-	}, [isVisible, setSessions, user])
+	}, [isVisible, sessions, setSessions, user])
 
 	React.useEffect(() => {
 		if (!user) return
 		if (isVisible) {
 			if (!sessions.find(({ id }) => id === user.id)) {
 				setUser(null)
-				console.log('has reset')
 			}
 		}
 	}, [isVisible, sessions, setUser, user])
