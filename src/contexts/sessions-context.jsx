@@ -16,6 +16,21 @@ export function SessionsProvider({ children }) {
 		setSessions((prevState) => [...prevState, user])
 	}
 
+	// find user by id in list of sessions
+	const findUserInSessions = React.useCallback(
+		() => (userId) => {
+			// setSessions(JSON.parse(window.localStorage.getItem('sessions')))
+			return sessions.find(({ id }) => id === userId)
+		},
+		[sessions]
+	)
+
+	// find user by id in list of sessions
+	// const syncTabWithSession = React.useCallback(() => {
+	// 	setSessions(JSON.parse(window.localStorage.getItem('sessions')))
+	// 	console.log({ sessions })
+	// }, [setSessions])
+
 	return (
 		<SessionsContext.Provider
 			value={{
@@ -23,6 +38,8 @@ export function SessionsProvider({ children }) {
 				sessions,
 				removeUserFromSessions,
 				addUserToSessions,
+				findUserInSessions,
+				setSessions,
 			}}
 		>
 			{children}

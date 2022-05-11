@@ -11,10 +11,8 @@ import { ReactComponent as UserIcon } from './icons/profile.svg'
 function App() {
 	// const [sessions, setSessions] = useLocalStorageState('sessions', [])
 	const [user, setUser] = useSessionStorageState('user', null)
-	const { test, sessions, removeUserFromSessions, addUserToSessions } =
+	const { sessions, removeUserFromSessions, addUserToSessions, setSessions } =
 		React.useContext(SessionsContext)
-
-	console.log({ test })
 
 	const isVisible = usePageVisibility()
 	const [state, setState] = React.useState({})
@@ -61,25 +59,33 @@ function App() {
 	// 	}
 	// }, [isVisible])
 
-	// React.useEffect(() => {
-	// 	if (!user) return
-	// 	if (isVisible) {
-	// 		window.location.reload()
-	// 	}
-	// }, [isVisible, setSessions, user])
+	React.useEffect(() => {
+		let intervalId
+		if (isVisible) {
+			intervalId = setInterval(() => {
+				setSessions(JSON.parse(window.localStorage.getItem('sessions')) || [])
+			}, 500)
+		}
+		return () => {
+			clearInterval(intervalId)
+		}
+	}, [isVisible, setSessions, user])
 
 	React.useEffect(() => {
 		if (!user) return
-		if (!sessions.find((session) => session.id === user.id)) {
-			setUser(null)
+		if (isVisible) {
+			if (!sessions.find(({ id }) => id === user.id)) {
+				setUser(null)
+				console.log('has reset')
+			}
 		}
-	}, [sessions, setUser, user])
+	}, [isVisible, sessions, setUser, user])
 
 	const handleLogout = () => {
 		window.location.reload()
 		removeUserFromSessions(user.id)
 		setUser(null)
-		window.close()
+		// window.close()
 	}
 
 	const handleLogin = (event) => {
@@ -92,7 +98,6 @@ function App() {
 			username,
 			status: 'active',
 		}
-
 		setUser(newUser)
 		addUserToSessions(newUser)
 		window.location.reload()
@@ -105,7 +110,7 @@ function App() {
 
 	return (
 		<div>
-			{`${console.log('render me')}`}
+			{/* {`${console.log('render me')}`} */}
 			<button onClick={clicked}>rerender</button>
 			{user ? (
 				<div className="card">
