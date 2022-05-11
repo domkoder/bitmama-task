@@ -3,7 +3,7 @@ import React from 'react'
 
 import { useSessionStorageState, usePageVisibility } from './hooks'
 
-import SessionsContext, { SessionsProvider } from './contexts/sessions-context'
+import SessionsContext from './contexts/sessions-context'
 
 import { ReactComponent as ProfileIcon } from './icons/profile-circle.svg'
 import { ReactComponent as UserIcon } from './icons/profile.svg'
@@ -11,75 +11,58 @@ import { ReactComponent as UserIcon } from './icons/profile.svg'
 function App() {
 	// const [sessions, setSessions] = useLocalStorageState('sessions', [])
 	const [user, setUser] = useSessionStorageState('user', null)
+	const isVisible = usePageVisibility()
 	const { sessions, removeUserFromSessions, addUserToSessions, setSessions } =
 		React.useContext(SessionsContext)
 
-	const isVisible = usePageVisibility()
-	const [state, setState] = React.useState({})
-
-	// refresh the active active every 60 second.
-	// React.useEffect(() => {
-	// 	if (!user) return
-
-	// 	let intervalId
-	// 	if (isVisible) {
-	// 		intervalId = setInterval(() => {
-	// 			// setSessions([...sessions])
-	// 			// setUser(user)
-	// 			window.location.reload(false)
-	// 			console.log('has reset')
-	// 		}, 30000)
-	// 	}
-
-	// 	return () => {
-	// 		clearInterval(intervalId)
-	// 	}
-	// }, [isVisible, user])
-
-	// set user status to idle after 60s of the tab not being active
-	// React.useEffect(() => {
-	// 	if (!user) return
-
-	// 	let timeOutId
-	// 	if (!isVisible) {
-	// 		setUser({ ...user, status: 'idle' })
-	// 		timeOutId = setTimeout(() => {
-	// 			setSessions(
-	// 				sessions.map((session) =>
-	// 					session.id === user.id ? { ...session, status: 'idle' } : session
-	// 				)
-	// 			)
-	// 			setUser({ ...user, status: 'idle' })
-	// 			console.log('changing status after 60 sec')
-	// 		}, 60000)
-	// 	}
-
-	// 	return () => {
-	// 		clearTimeout(timeOutId)
-	// 	}
-	// }, [isVisible])
-
-	React.useEffect(() => {
-		if (!user) return
-		let intervalId
-		if (isVisible) {
-			intervalId = setInterval(() => {
-				setSessions(JSON.parse(window.localStorage.getItem('sessions')) || [])
-			}, 500)
-		}
-		return () => {
-			clearInterval(intervalId)
-		}
-	}, [isVisible, sessions, setSessions, user])
-
+	// check if user is in local storage if not logout the user.
 	React.useEffect(() => {
 		if (!user) return
 		if (isVisible) {
 			if (!sessions.find(({ id }) => id === user.id)) {
 				setUser(null)
+				return
 			}
 		}
 	}, [isVisible, sessions, setUser, user])
+
+	// set user status to idle after 60s of the tab not being active
+	React.useEffect(() => {
+		if (!user) return
+
+		let timeOutId
+		if (!isVisible) {
+			timeOutId = setTimeout(() => {
+				setSessions(
+					sessions.map((session) =>
+						session.id === user.id ? { ...session, status: 'idle' } : session
+					)
+				)
+				console.log('setting user to active')
+			}, 10000)
+		}
+		return () => {
+			clearTimeout(timeOutId)
+		}
+	}, [isVisible, sessions, setSessions, user])
+
+	// Refresh the app after 1 second
+	React.useEffect(() => {
+		let intervalId
+
+		if (isVisible) {
+			intervalId = setInterval(() => {
+				let newSessions =
+					JSON.parse(window.localStorage.getItem('sessions')) || []
+
+				setSessions(newSessions)
+				console.log('updating')
+			}, 1000)
+		}
+		return () => {
+			clearInterval(intervalId)
+		}
+	}, [isVisible, setSessions])
 
 	const handleLogout = () => {
 		window.location.reload()
@@ -89,6 +72,7 @@ function App() {
 	}
 
 	const handleLogin = (event) => {
+		// event.preventDefault()
 		const username = event.target.username.value
 
 		// creat user object
@@ -103,15 +87,8 @@ function App() {
 		window.location.reload()
 	}
 
-	const clicked = () => {
-		setState('clicked')
-		console.log('clicked')
-	}
-
 	return (
 		<div>
-			{/* {`${console.log('render me')}`} */}
-			<button onClick={clicked}>rerender</button>
 			{user ? (
 				<div className="card">
 					<header className="header">
