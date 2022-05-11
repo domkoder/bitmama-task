@@ -1,60 +1,88 @@
+import './App.css'
 import React from 'react'
 
-// import {
-// 	useLocalStorageState,
-// 	useSessionStorageState,
-// 	usePageVisibility,
-// } from './hooks'
+import { useSessionStorageState, usePageVisibility } from './hooks'
 
-import {
-	useLocalStorageState,
-	useSessionStorageState,
-	usePageVisibility,
-} from './hooks'
-
-import './App.css'
+import SessionsContext, { SessionsProvider } from './contexts/sessions-context'
 
 import { ReactComponent as ProfileIcon } from './icons/profile-circle.svg'
 import { ReactComponent as UserIcon } from './icons/profile.svg'
 
 function App() {
-	const [sessions, setSessions] = useLocalStorageState('sessions', [])
+	// const [sessions, setSessions] = useLocalStorageState('sessions', [])
 	const [user, setUser] = useSessionStorageState('user', null)
+	const { test, sessions, removeUserFromSessions, addUserToSessions } =
+		React.useContext(SessionsContext)
+
+	console.log({ test })
+
 	const isVisible = usePageVisibility()
+	const [state, setState] = React.useState({})
 
-	// Change the title based on page visibility
+	// refresh the active active every 60 second.
+	// React.useEffect(() => {
+	// 	if (!user) return
 
-	// if (isVisible) {
-	// 	document.title = 'Active'
-	// } else {
-	// 	document.title = 'Inactive'
-	// }
+	// 	let intervalId
+	// 	if (isVisible) {
+	// 		intervalId = setInterval(() => {
+	// 			// setSessions([...sessions])
+	// 			// setUser(user)
+	// 			window.location.reload(false)
+	// 			console.log('has reset')
+	// 		}, 30000)
+	// 	}
 
-	// const refresh = () => {
-	// 	setSessions([...sessions])
-	// 	setUser(user)
-	// }
+	// 	return () => {
+	// 		clearInterval(intervalId)
+	// 	}
+	// }, [isVisible, user])
 
-	// if (isVisible) {
-	// 	refresh()
-	// }
+	// set user status to idle after 60s of the tab not being active
+	// React.useEffect(() => {
+	// 	if (!user) return
+
+	// 	let timeOutId
+	// 	if (!isVisible) {
+	// 		setUser({ ...user, status: 'idle' })
+	// 		timeOutId = setTimeout(() => {
+	// 			setSessions(
+	// 				sessions.map((session) =>
+	// 					session.id === user.id ? { ...session, status: 'idle' } : session
+	// 				)
+	// 			)
+	// 			setUser({ ...user, status: 'idle' })
+	// 			console.log('changing status after 60 sec')
+	// 		}, 60000)
+	// 	}
+
+	// 	return () => {
+	// 		clearTimeout(timeOutId)
+	// 	}
+	// }, [isVisible])
+
+	// React.useEffect(() => {
+	// 	if (!user) return
+	// 	if (isVisible) {
+	// 		window.location.reload()
+	// 	}
+	// }, [isVisible, setSessions, user])
 
 	React.useEffect(() => {
 		if (!user) return
 		if (!sessions.find((session) => session.id === user.id)) {
-			console.log('running')
 			setUser(null)
 		}
-		// console.log('running')
 	}, [sessions, setUser, user])
 
 	const handleLogout = () => {
-		removeSession(user.id)
+		window.location.reload()
+		removeUserFromSessions(user.id)
 		setUser(null)
+		window.close()
 	}
 
 	const handleLogin = (event) => {
-		event.preventDefault()
 		const username = event.target.username.value
 
 		// creat user object
@@ -65,20 +93,20 @@ function App() {
 			status: 'active',
 		}
 
-		// add user to session
 		setUser(newUser)
-
-		// add user session to list of sessions
-		setSessions([...sessions, newUser])
+		addUserToSessions(newUser)
+		window.location.reload()
 	}
 
-	// remove user session from list of sessions
-	const removeSession = (userId) => {
-		setSessions(sessions.filter(({ id }) => id !== userId))
+	const clicked = () => {
+		setState('clicked')
+		console.log('clicked')
 	}
 
 	return (
 		<div>
+			{`${console.log('render me')}`}
+			<button onClick={clicked}>rerender</button>
 			{user ? (
 				<div className="card">
 					<header className="header">
@@ -122,7 +150,10 @@ function App() {
 											<div className="user__tab">Tab 1</div>
 										</div>
 									</div>
-									<button className="delete" onClick={() => removeSession(id)}>
+									<button
+										className="delete"
+										onClick={() => removeUserFromSessions(id)}
+									>
 										×
 									</button>
 								</li>
