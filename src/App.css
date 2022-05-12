@@ -16,15 +16,6 @@
 	width: 60px;
 }
 
-/* .testing {
-	height: 60px;
-	width: 60px;
-	background: rgb(241, 242, 247);
-	border-radius: 30px;
-	display: grid;
-	place-items: center;
-} */
-
 .card {
 	max-width: 450px;
 	border-radius: 3px;
@@ -132,6 +123,14 @@
 
 .button-secondary:hover {
 	background: rgb(230, 232, 240);
+}
+
+.button-danger {
+	background-color: #e53e3e;
+}
+
+.button-danger:hover {
+	background-color: #c53030;
 }
 
 .list {

@@ -26,7 +26,7 @@ function App() {
 		}
 	}, [isVisible, sessions, setUser, user])
 
-	// // set user status to idle after 60s of the tab not being active
+	// set user status to idle after 60s of the tab not being active
 	React.useEffect(() => {
 		if (!user) return
 
@@ -97,6 +97,15 @@ function App() {
 		window.location.reload()
 	}
 
+	const handleClear = () => {
+		var clicked = window.confirm(
+			`Please click 'OK' if you are sure you want to clear all sessions`
+		)
+		if (clicked === true) {
+			setSessions([])
+		}
+	}
+
 	return (
 		<div>
 			{user ? (
@@ -106,6 +115,7 @@ function App() {
 							<ProfileIcon className="profile__icon" />
 							<p>{user.username}</p>
 						</div>
+
 						<a
 							href="http://localhost:3000/"
 							target="_blank"
@@ -151,6 +161,11 @@ function App() {
 								</li>
 							))}
 					</ul>
+					<footer>
+						<button className="button button-danger" onClick={handleClear}>
+							Clear all sessions
+						</button>
+					</footer>
 				</div>
 			) : (
 				<div className="card">
