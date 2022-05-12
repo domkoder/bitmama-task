@@ -26,25 +26,25 @@ function App() {
 		}
 	}, [isVisible, sessions, setUser, user])
 
-	// set user status to idle after 60s of the tab not being active
-	React.useEffect(() => {
-		if (!user) return
+	// // set user status to idle after 60s of the tab not being active
+	// React.useEffect(() => {
+	// 	if (!user) return
 
-		let timeOutId
-		if (!isVisible) {
-			timeOutId = setTimeout(() => {
-				setSessions(
-					sessions.map((session) =>
-						session.id === user.id ? { ...session, status: 'idle' } : session
-					)
-				)
-				console.log('setting user to active')
-			}, 10000)
-		}
-		return () => {
-			clearTimeout(timeOutId)
-		}
-	}, [isVisible, sessions, setSessions, user])
+	// 	let timeOutId
+	// 	if (!isVisible) {
+	// 		timeOutId = setTimeout(() => {
+	// 			setSessions(
+	// 				sessions.map((session) =>
+	// 					session.id === user.id ? { ...session, status: 'idle' } : session
+	// 				)
+	// 			)
+	// 			console.log('setting user to active')
+	// 		}, 10000)
+	// 	}
+	// 	return () => {
+	// 		clearTimeout(timeOutId)
+	// 	}
+	// }, [isVisible, sessions, setSessions, user])
 
 	// Refresh the app after 1 second
 	React.useEffect(() => {
