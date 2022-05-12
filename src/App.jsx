@@ -27,24 +27,27 @@ function App() {
 	}, [isVisible, sessions, setUser, user])
 
 	// // set user status to idle after 60s of the tab not being active
-	// React.useEffect(() => {
-	// 	if (!user) return
+	React.useEffect(() => {
+		if (!user) return
 
-	// 	let timeOutId
-	// 	if (!isVisible) {
-	// 		timeOutId = setTimeout(() => {
-	// 			setSessions(
-	// 				sessions.map((session) =>
-	// 					session.id === user.id ? { ...session, status: 'idle' } : session
-	// 				)
-	// 			)
-	// 			console.log('setting user to active')
-	// 		}, 10000)
-	// 	}
-	// 	return () => {
-	// 		clearTimeout(timeOutId)
-	// 	}
-	// }, [isVisible, sessions, setSessions, user])
+		let timeOutId
+		if (!isVisible) {
+			timeOutId = setTimeout(() => {
+				let newSessions =
+					JSON.parse(window.localStorage.getItem('sessions')) || []
+
+				setSessions(
+					newSessions.map((session) =>
+						session.id === user.id ? { ...session, status: 'idle' } : session
+					)
+				)
+				console.log('setting user to active')
+			}, 10000)
+		}
+		return () => {
+			clearTimeout(timeOutId)
+		}
+	}, [isVisible, sessions, setSessions, user])
 
 	// Refresh the app after 1 second
 	React.useEffect(() => {
@@ -74,6 +77,13 @@ function App() {
 	const handleLogin = (event) => {
 		// event.preventDefault()
 		const username = event.target.username.value
+
+		// check if user is already already in session
+		const foundUser = sessions.find((session) => session.username === username)
+		if (foundUser) {
+			alert(`user with this username ${username} already exist`)
+			return
+		}
 
 		// creat user object
 		const id = Math.floor(Math.random() * 10000) + 1
