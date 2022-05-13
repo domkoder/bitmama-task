@@ -15,24 +15,19 @@ export function AppProvider({ children }) {
 
 	// add user to list of sessions
 	const addUserToSessions = (user) => {
-		setSessions((prevState) => [...prevState, user])
+		let newSessions = JSON.parse(window.localStorage.getItem('sessions')) || []
+		setSessions([user, ...newSessions])
 	}
 
-	// find user by id in list of sessions
-	// const findUserInSessions = React.useCallback(
-	// 	() => (userId) => {
-	// 		// setSessions(JSON.parse(window.localStorage.getItem('sessions')))
-	// 		return sessions.find(({ id }) => id === userId)
-	// 	},
-	// 	[sessions]
-	// )
-
 	const handleLogin = (event) => {
-		// event.preventDefault()
+		event.preventDefault()
 		const username = event.target.username.value
 
 		// check if user is already already in session
-		const foundUser = sessions.find((session) => session.username === username)
+		let newSessions = JSON.parse(window.localStorage.getItem('sessions')) || []
+		const foundUser = newSessions.find(
+			(session) => session.username === username
+		)
 		if (foundUser) {
 			alert(`user with this username ${username} already exist`)
 			return
@@ -44,10 +39,11 @@ export function AppProvider({ children }) {
 			id,
 			username,
 			status: 'active',
+			lastActive: false,
 		}
 		setUser(newUser)
 		addUserToSessions(newUser)
-		window.location.reload()
+		// window.location.reload()
 	}
 
 	const handleLogout = () => {
@@ -65,12 +61,6 @@ export function AppProvider({ children }) {
 			setSessions([])
 		}
 	}
-
-	// find user by id in list of sessions
-	// const syncTabWithSession = React.useCallback(() => {
-	// 	setSessions(JSON.parse(window.localStorage.getItem('sessions')))
-	// 	console.log({ sessions })
-	// }, [setSessions])
 
 	return (
 		<AppContext.Provider

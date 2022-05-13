@@ -29,13 +29,29 @@ function SessionsList() {
 						session.id === user.id ? { ...session, status: 'idle' } : session
 					)
 				)
-				console.log('setting user to active')
-			}, 10000)
+			}, 60000)
 		}
 		return () => {
 			clearTimeout(timeOutId)
 		}
 	}, [isVisible, sessions, setSessions, user])
+
+	// set the last active user
+	React.useEffect(() => {
+		if (!user) return
+		if (!isVisible) {
+			let newSessions =
+				JSON.parse(window.localStorage.getItem('sessions')) || []
+
+			setSessions(
+				newSessions.map((session) =>
+					session.id === user.id
+						? { ...session, lastActive: true }
+						: { ...session, lastActive: false }
+				)
+			)
+		}
+	}, [isVisible])
 
 	// Refresh the app after 1 second
 	React.useEffect(() => {
@@ -51,8 +67,7 @@ function SessionsList() {
 						session.id === user.id ? { ...session, status: 'active' } : session
 					)
 				)
-				console.log('updating')
-			}, 1000)
+			}, 500)
 		}
 		return () => {
 			clearInterval(intervalId)
@@ -86,7 +101,6 @@ function SessionsList() {
 												{status}
 											</span>
 										</div>
-										<div className="user__tab">Tab 1</div>
 									</div>
 								</div>
 								<button

@@ -12,6 +12,7 @@ function Header() {
 			<div className="profile__info ">
 				<ProfileIcon className="profile__icon" />
 				<p>{user.username}</p>
+				<span className="user__status active ">active</span>
 			</div>
 
 			<div className="actions">

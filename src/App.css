@@ -2,6 +2,9 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	/* border-bottom: 2px solid rgb(228, 229, 233); */
+	padding: 10px 0;
+	margin-bottom: 10px;
 }
 
 .profile__info {
@@ -195,7 +198,18 @@
 		gap: 30px;
 	}
 
+	.actions {
+		/* align-items: space-between; */
+		justify-content: space-between;
+		width: 100%;
+	}
+
 	.card {
 		margin: 0vh auto;
+		padding: 1rem;
+	}
+
+	.list__item {
+		padding: 16px 0px;
 	}
 }
