@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react'
 
 import { ReactComponent as UserIcon } from '../assets/icons/profile.svg'
