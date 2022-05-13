@@ -16,7 +16,7 @@ function Header() {
 
 			<div className="actions">
 				<a
-					href="http://localhost:3000/"
+					href="https://bitmamatask.netlify.app/"
 					target="_blank"
 					rel="noreferrer"
 					className="button"
